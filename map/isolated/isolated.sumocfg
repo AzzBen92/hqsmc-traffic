@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+    <input>
+        <net-file value="isolated.net.xml"/>
+        <route-files value="isolated.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+    </time>
+    <processing>
+        <ignore-route-errors value="true"/>
+    </processing>
+    <report>
+        <verbose value="false"/>
+        <no-step-log value="true"/>
+    </report>
+</configuration>

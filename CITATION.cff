@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the articles below."
+title: "H-QSMC: hybrid Q-learning - SARSA - Monte Carlo for adaptive traffic signal control"
+authors:
+  - family-names: "Ben Moussa"
+    given-names: "Azzeddine"
+    affiliation: "L2MASI Laboratory, Faculty of Sciences Dhar El Mahraz, Sidi Mohamed Ben Abdellah University, Fez, Morocco"
+  - family-names: "Khazari"
+    given-names: "Adil"
+    affiliation: "L2MASI Laboratory, National School of Commerce and Management, Sidi Mohamed Ben Abdellah University, Fez, Morocco"
+license: MIT
+repository-code: "https://github.com/AzzBen92"
+preferred-citation:
+  type: article
+  title: "A Multi-Agent Reinforcement Learning Framework for Adaptive Traffic Signal Control in Real Urban Networks: Simulation, Performance Analysis, and Statistical Evaluation"
+  authors:
+    - family-names: "Ben Moussa"
+      given-names: "Azzeddine"
+    - family-names: "Khazari"
+      given-names: "Adil"
+  journal: "Future Transportation"
+  volume: 6
+  issue: 5
+  start: 208
+  year: 2026
+  doi: "10.3390/futuretransp6050208"
+references:
+  - type: article
+    title: "Optimizing Traffic Signal Control Using Reinforcement Learning Methods: Hybrid Approach"
+    authors:
+      - family-names: "Ben Moussa"
+        given-names: "Azzeddine"
+      - family-names: "Khazari"
+        given-names: "Adil"
+    journal: "Mathematical and Computational Applications"
+    volume: 31
+    start: 151
+    year: 2026
+  - type: book-section
+    title: "Reinforcement Learning for Autonomous Driving: Optimization Strategies and Methodologies"
+    authors:
+      - family-names: "Ben Moussa"
+        given-names: "Azzeddine"
+      - family-names: "Khazari"
+        given-names: "Adil"
+    collection-title: "Artificial Intelligence and Mathematics, ICAIM 2025 (Springer Proceedings in Mathematics & Statistics, vol. 538)"
+    publisher:
+      name: "Springer, Cham"
+    start: 369
+    end: 385
+    year: 2026
