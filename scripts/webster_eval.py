@@ -37,18 +37,35 @@ FIELDS = ["controller", "seed", "reward", "queue", "wait", "speed", "co2", "fuel
 def build_webster(scenario: str, min_green: int | None) -> Path:
     """Run tlsCycleAdaptation.py (Webster) and force the resulting programs to static."""
     folder = ROOT / "map" / scenario
-    net = folder / "osm.net.xml.gz"
-    routes = next((folder / n for n in ("osm.passenger.rou.xml", "osm.passenger.trips.xml")
+    net = next(p for p in (folder / "osm.net.xml.gz", folder / "isolated.net.xml") if p.exists())
+    routes = next((folder / n for n in ("osm.passenger.rou.xml", "osm.passenger.trips.xml", "isolated.rou.xml")
                    if (folder / n).exists()), None)
     if routes is None:
         raise SystemExit(f"No route/trip file found in {folder}.")
     tag = f"_g{min_green}" if min_green else ""
     out = folder / f"webster{tag}.add.xml"
-    cmd = [sys.executable, str(find_sumo_home() / "tools" / "tlsCycleAdaptation.py"),
-           "-n", str(net), "-r", str(routes), "-o", str(out), "--program", "W"]
-    if min_green:
-        cmd += ["--min-green", str(min_green)]
-    subprocess.run(cmd, check=True)
+
+    def adapt(route_file: Path) -> None:
+        cmd = [sys.executable, str(find_sumo_home() / "tools" / "tlsCycleAdaptation.py"),
+               "-n", str(net), "-r", str(route_file), "-o", str(out), "--program", "W"]
+        if min_green:
+            cmd += ["--min-green", str(min_green)]
+        subprocess.run(cmd, check=True)
+
+    adapt(routes)
+    if "<tlLogic" not in out.read_text():
+        # tlsCycleAdaptation ignores <flow> demand (e.g. probability flows of the
+        # isolated scenario): expand the flows into routed vehicles first.
+        import re
+        txt = re.sub(r'probability="([0-9.]+)"',
+                     lambda m: f'vehsPerHour="{float(m.group(1)) * 3600:.0f}"',
+                     routes.read_text())
+        conv = folder / "webster_input.rou.xml"
+        conv.write_text(txt)
+        routed = folder / "webster_routed.rou.xml"
+        subprocess.run([str(find_sumo_home() / "bin" / "duarouter"), "-n", str(net),
+                        "-r", str(conv), "-o", str(routed), "--seed", "42"], check=True)
+        adapt(routed)
     # Webster is a fixed-time method: make the generated programs static.
     out.write_text(out.read_text().replace('type="actuated"', 'type="static"'))
     return out
@@ -86,7 +103,7 @@ def run_episode_fixed(scenario: str, seed: int, extra: list[str], program: str |
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--scenario", default="sefrou", choices=["sefrou", "saiss"])
+    ap.add_argument("--scenario", default="sefrou", choices=["isolated", "sefrou", "saiss"])
     ap.add_argument("--min-green", type=int, default=None,
                     help="minimum green (s) passed to Webster, e.g. 10 = thesis g_min")
     ap.add_argument("--seeds", type=int, nargs="*", default=None,
