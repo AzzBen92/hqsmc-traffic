@@ -1,4 +1,4 @@
-"""Build a SUMO network from OpenStreetMap.
+"""Build a SUMO network from OpenStreetMap (Sections 6.1 and 7.5.1).
 
     # 1) download the OSM extract (needs internet), bbox = west,south,east,north (WGS84)
     python scripts/build_network.py --name sefrou --bbox <W>,<S>,<E>,<N>

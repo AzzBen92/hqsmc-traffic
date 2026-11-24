@@ -1,14 +1,14 @@
-"""Multi-intersection environment: the Saiss network, eight agents.
+"""Multi-intersection environment: the Saiss network, eight agents (Chapter 7).
 
-Local state of agent i:
+Local state of agent i (Table 7.2 and Eq. 7.5):
     s_t^i = (q_t^i, w_t^i, v_t^i, p_t^i, d_t^i, phi_i(t))
     q, w  : min-max scaling on [0, QUEUE_MAX] and [0, WAIT_MAX]
     v     : divided by the free-flow speed
     p     : current phase, binary (0 = horizontal / East-West, 1 = vertical / North-South)
     d     : time since the last phase change, divided by g_min
-    phi_i : mean (q, w) over the direct neighbours N_i, same normalisation
+    phi_i : mean (q, w) over the direct neighbours N_i (Eq. 7.4), same normalisation
 Actions: A^i = {0, 1} = request of green for the horizontal / vertical movement.
-Safety constraint: the request is executed only if d >= g_min, otherwise the
+Safety constraint (Eq. 7.15): the request is executed only if d >= g_min, otherwise the
 current phase p is kept; the EXECUTED action is the one used in the updates.
 """
 
@@ -25,7 +25,7 @@ AXIS_OF_ACTION = {0: "EW", 1: "NS"}     # 0 = horizontal, 1 = vertical
 
 
 def axis_bit(c: SignalController) -> int:
-    """Binary phase p of the state: 0 if the active (or target) green serves East-West, 1 North-South."""
+    """Binary phase p of Table 7.2: 0 if the active (or target) green serves East-West, 1 North-South."""
     return 1 if c.axis == "NS" else 0
 
 
@@ -98,7 +98,7 @@ class MultiIntersectionEnv:
         return axis_bit(c) if c else 0
 
     def project(self, i: int, requested: int) -> int:
-        """Safety projection C(a, s): keep the current phase while d < g_min."""
+        """Safety projection C(a, s) of Eq. 7.15."""
         c = self.controllers.get(i)
         if c is None:
             return requested
@@ -168,7 +168,7 @@ class MultiIntersectionEnv:
 
     # ------------------------------------------------------------------ metrics
     def episode_summary(self) -> dict:
-        """Network-level indicators: mean over the eight intersections."""
+        """Network-level indicators: mean over the eight intersections (Section 7.5.4)."""
         per = {i: m.episode_summary() for i, m in self.monitors.items()}
         keys = ("queue", "wait", "speed", "co2", "fuel")
         out = {k: float(np.mean([p[k] for p in per.values()])) for k in keys}

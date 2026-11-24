@@ -1,16 +1,16 @@
 """
-Central configuration of the experiments.
+Central configuration of the experiments (thesis, Appendix A).
 
-An experiment is fully defined by editing this file:
-    SCENARIO   -> "sefrou" (one intersection) or "saiss" (network of eight intersections)
+As described in the thesis, an experiment is fully defined by editing this file:
+    SCENARIO   -> "isolated" (Chapter 5), "sefrou" (Chapter 6) or "saiss" (Chapter 7)
     ALGORITHM  -> "qlearning", "sarsa", "montecarlo", "hybrid", "fixed"
-                  (+ "dqn" and "ppo" for the Saiss network)
+                  (+ "dqn" and "ppo" for the Saiss network, Chapter 7)
     SEED       -> random seed (Python epsilon-greedy draws AND SUMO --seed)
     EPISODES   -> number of training episodes
 
 Then, from the project root:
-    python -m training.train      # one intersection (single agent)
-    python train_multi.py         # Saiss network, eight intersections (multi-agent)
+    python -m training.train      # one intersection (Chapters 5 and 6)
+    python train_multi.py         # Saiss network, eight intersections (Chapter 7)
 
 Scripts that run several seeds or methods (scripts/run_experiments.py) call
 `load_config(**overrides)` instead of editing this file.
@@ -47,24 +47,24 @@ PRINT_EVERY = 10             # progress line every N episodes
 SUMO_HOME = os.environ.get("SUMO_HOME", "")   # auto-detected if empty (see environment/sumo_utils.py)
 SUMO_GUI = False             # True to watch the simulation in sumo-gui
 USE_LIBSUMO = False          # True = in-process libsumo (2-5x faster, no GUI)
-EPISODE_LENGTH = 3600        # s, one simulated hour
+EPISODE_LENGTH = 3600        # s, one simulated hour (Tables 6.1 and 7.7)
 STEP_LENGTH = 1.0            # s, simulation AND decision step (Delta t = 1 s)
-SUMO_SEED_PER_EPISODE = False  # False: SUMO --seed = SEED for every episode (default)
+SUMO_SEED_PER_EPISODE = False  # False: SUMO --seed = SEED for every episode (thesis setting)
 TIME_TO_TELEPORT = 300       # SUMO default
 SUMO_EXTRA_ARGS: list[str] = []
 
 # =============================================================================
-# 3. Learning hyper-parameters (common to all scenarios)
+# 3. Learning hyper-parameters (common to Chapters 5, 6 and 7)
 # =============================================================================
 ALPHA = 0.10                 # learning rate
 GAMMA = 0.95                 # discount factor
 EPSILON_START = 1.0
 EPSILON_DECAY = 0.9993       # multiplicative decay per episode
 EPSILON_MIN = 0.005
-HYBRID_WEIGHTS = (0.5, 0.3, 0.2)   # (w_Q, w_S, w_MC)
+HYBRID_WEIGHTS = (0.5, 0.3, 0.2)   # (w_Q, w_S, w_MC), Chapters 6 and 7
 MC_VISIT = "last"            # "last": each (s,a) updated once per episode, with the return of its LAST visit
 
-# Multi-objective reward:
+# Multi-objective reward (Eq. 6.2 and 7.6):
 #   r = -2.0 q - 0.05 w + 1.5 v - 1e-3 CO2 - 1e-3 fuel
 REWARD_COEFS = {"queue": -2.0, "wait": -0.05, "speed": 1.5, "co2": -1e-3, "fuel": -1e-3}
 
@@ -84,23 +84,43 @@ FIGURES_DIR = ROOT / "figures"
 # 5. Scenario-specific settings
 # =============================================================================
 SCENARIO_SETTINGS = {
-    # ---------------------------------------------------------------- single intersection
-    # Route de Sefrou - Boulevard Moulay Rachid, Fes.
+    # ---------------------------------------------------------------- Chapter 5
+    # Isolated intersection, hybrid method with DYNAMIC weights (variant V2).
+    # Preliminary study: the detailed configuration (state variables, demand, ...)
+    # is documented in docs/IMPLEMENTATION_NOTES.md.
+    "isolated": {
+        "SUMO_CFG": ROOT / "map" / "isolated" / "isolated.sumocfg",
+        "TLS_ID": None,
+        "TLS_COORD": None,
+        "REWARD_MODE": "waiting",           # r = - cumulative waiting time
+        "HYBRID_WEIGHT_MODE": "dynamic",    # w = f(xi), xi = episode / EPISODES
+        "MIN_GREEN": 10, "MAX_GREEN": 60, "YELLOW": 3, "ALL_RED": 2,
+        "QUEUE_BINS": 5, "QUEUE_MAX": 20.0,
+        "WAIT_BINS": 5, "WAIT_MAX": 120.0,
+        "SPEED_BINS": 5, "SPEED_MAX": 20.0,
+        "EVAL_LAST": 100,
+        "SMOOTH_WINDOW": 100,
+        "SEEDS": [42],
+    },
+    # ---------------------------------------------------------------- Chapter 6
+    # Route de Sefrou - Boulevard Moulay Rachid, Fes (Table 6.1).
     "sefrou": {
         "SUMO_CFG": ROOT / "map" / "sefrou" / "osm.sumocfg",
         "TLS_ID": None,          # SUMO id of the studied traffic light (None = auto)
         "TLS_COORD": None,       # (x, y) in network coordinates, used if TLS_ID is None
+        "REWARD_MODE": "multi",
+        "HYBRID_WEIGHT_MODE": "fixed",
         "MIN_GREEN": 10, "MAX_GREEN": 60, "YELLOW": 3, "ALL_RED": 2,
-        # State discretisation: 5 uniform bins, out-of-range -> nearest bin
+        # State discretisation (Section 6.2.2): 5 uniform bins, out-of-range -> nearest bin
         "QUEUE_BINS": 5, "QUEUE_MAX": 20.0,      # vehicles, per approach (L = 4)
         "WAIT_BINS": 5, "WAIT_MAX": 120.0,       # s
         "SPEED_BINS": 5, "SPEED_MAX": 20.0,      # m/s
         "SEEDS": [42, 10, 20, 30, 7],
-        # Fixed-time / native SUMO reference values
+        # Fixed-time / native SUMO reference (Table 6.3)
         "REFERENCE": {"speed": 10.47, "queue": 6.81, "co2": 5000.0},
     },
-    # ---------------------------------------------------------------- network of 8 intersections
-    # Saiss district, Fes: eight signalised intersections.
+    # ---------------------------------------------------------------- Chapter 7
+    # Saiss district, Fes: eight signalised intersections (Tables 7.3 to 7.7).
     "saiss": {
         "SUMO_CFG": ROOT / "map" / "saiss" / "osm.sumocfg",
         "DEMAND": "medium",       # "low" (~3000 trips), "medium" (4313), "high" (~6200)
@@ -110,31 +130,32 @@ SCENARIO_SETTINGS = {
             "high": ROOT / "map" / "saiss" / "osm_high.sumocfg",
         },
         # SUMO ids of the eight traffic lights I1..I8. If None, each agent is attached
-        # to the traffic light closest to the coordinates below (network x, y).
+        # to the traffic light closest to the coordinates of Table 7.3 (network x, y).
         "TLS_IDS": None,
         "TLS_COORDS": {
             1: (2372.0, 2998.0), 2: (934.0, 3650.0), 3: (1726.0, 3511.0), 4: (1488.0, 2891.0),
             5: (1884.0, 3177.0), 6: (2308.0, 2499.0), 7: (961.0, 2503.0), 8: (1261.0, 1624.0),
         },
-        # Direct neighbours, fixed offline
+        # Direct neighbours, fixed offline (Table 7.3)
         "NEIGHBORS": {
             1: [5, 6], 2: [3], 3: [2, 4, 5], 4: [3, 5, 7],
             5: [1, 3, 4], 6: [1], 7: [4, 8], 8: [7],
         },
-        "USE_NEIGHBORS": True,    # False = agents without neighbour information (ablation)
-        "MIN_GREEN": 10,          # g_min of the safety constraint
-        "MAX_GREEN": None,        # no maximum green
+        "USE_NEIGHBORS": True,    # False = ablation configurations B and D (Table 7.12)
+        "REWARD_MODE": "multi",
+        "MIN_GREEN": 10,          # g_min of the safety constraint (Eq. 7.14)
+        "MAX_GREEN": None,        # no maximum green in Chapter 7
         "YELLOW": 3, "ALL_RED": 2,
-        # Normalisation and discretisation of the local state
+        # Normalisation and discretisation of the local state (Table 7.2)
         "QUEUE_MAX": 20.0,        # min-max scaling of q on [0, QUEUE_MAX]
         "WAIT_MAX": 120.0,        # min-max scaling of w on [0, WAIT_MAX]
         "QUEUE_BINS": 5, "WAIT_BINS": 5, "SPEED_BINS": 5,
         "DURATION_BINS": 2,       # d / g_min in [0,1) -> 0, >= 1 -> 1 (switch admissible)
         "NEIGHBOR_BINS": 5,       # bins for each of the two neighbour summaries
         "SEEDS": [42, 10, 20],
-        # Indicative fixed-time reference values
+        # Indicative fixed-time reference values (Section 7.5.4)
         "REFERENCE": {"speed": 10.47, "queue": 6.90, "co2": 5000.0, "fuel": 2000.0},
-        # Deep MARL baselines: default hyper-parameters, NumPy implementation
+        # Deep MARL baselines (Section 7.6.10): default hyper-parameters, NumPy implementation
         "DQN": {"hidden": (64, 64), "lr": 1e-4, "buffer_size": 50_000, "batch_size": 32,
                 "learning_starts": 1_000, "train_freq": 4, "target_update": 1_000,
                 "huber_delta": 1.0, "max_grad_norm": 10.0},
@@ -145,6 +166,7 @@ SCENARIO_SETTINGS = {
 }
 
 VALID_ALGORITHMS = {
+    "isolated": {"qlearning", "sarsa", "montecarlo", "hybrid", "fixed"},
     "sefrou": {"qlearning", "sarsa", "montecarlo", "hybrid", "fixed"},
     "saiss": {"qlearning", "sarsa", "montecarlo", "hybrid", "fixed", "dqn", "ppo"},
 }

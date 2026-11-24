@@ -11,16 +11,16 @@ Each study has its own folder. A simulation is entirely defined by the files of 
 
 ## Folders
 
-* `sefrou/` - Route de Sefrou - Boulevard Moulay Rachid intersection, Fes. Included:
+* `sefrou/` - Route de Sefrou - Boulevard Moulay Rachid intersection, Fes (Chapter 6). Included:
   network, demand (630 trips, OSM Web Wizard), buildings, the OSM extract (`osm_bbox.osm.xml.gz`,
   bounds 34.0032-34.0203 N, 4.9930-4.9705 W) and `osm.sumocfg`.
-* `saiss/` - Saiss district, eight signalised intersections. Included: network
+* `saiss/` - Saiss district, eight signalised intersections (Chapter 7). Included: network
   (`osm.net.xml.gz`, 8 traffic lights), medium demand (`osm.passenger.trips.xml`, 4314 trips over
   3600 s, OSM Web Wizard, SUMO 1.27.1), buildings and `osm.sumocfg` (simulation outputs removed for
   training). The low and high demand levels (`osm_low.sumocfg`, `osm_high.sumocfg`) are not included;
   `scripts/generate_demand.py --scenario saiss --demand low|high` builds them from this network.
-* `demo_single/`, `demo_grid/` - small synthetic test networks, created by
-  `python scripts/make_test_networks.py` (not versioned).
+* `isolated/` - synthetic isolated intersection (Chapter 5), created by
+  `python scripts/make_test_networks.py` (with the `demo_single/` and `demo_grid/` test networks).
 
 ## Using your own files
 
@@ -35,7 +35,7 @@ python scripts/build_network.py --name saiss --osm path/to/saiss.osm
 python scripts/generate_demand.py --scenario saiss --demand medium
 python scripts/generate_demand.py --scenario saiss --demand low
 python scripts/generate_demand.py --scenario saiss --demand high
-python scripts/turning_ratios.py                               # turning movements
+python scripts/turning_ratios.py                               # Table 7.6
 ```
 
 Open the network once in `sumo-gui` or `netedit` to check the traffic lights; in `config.py`,

@@ -1,10 +1,10 @@
-"""Single-intersection environment.
+"""Single-intersection environment (Chapters 5 and 6).
 
-MDP:
+MDP of Section 6.2:
     state   s_t = (q^(1..4), w, v, phi)  -> 5^4 x 5 x 5 x 4 = 62 500 discrete states
     actions 0: keep the current phase, 1: green North-South, 2: green East-West,
             3: next phase of the plan   (min green 10 s, max green 60 s)
-    reward  multi-objective (queue, waiting time, speed, CO2, fuel)
+    reward  multi-objective (Eq. 6.2), or minus the cumulative waiting time (Chapter 5)
 """
 
 from __future__ import annotations
@@ -87,7 +87,9 @@ class TrafficSignalEnv:
         return self.encode(m), reward, done, m
 
     def reward(self, m: dict) -> float:
-        return multi_objective_reward(m, self.cfg.REWARD_COEFS)
+        if self.cfg.REWARD_MODE == "waiting":          # Chapter 5
+            return -m["wait_total"]
+        return multi_objective_reward(m, self.cfg.REWARD_COEFS)   # Chapter 6
 
     def close(self):
         self.runner.close()
@@ -100,7 +102,7 @@ class TrafficSignalEnv:
         return min(self.traci.trafficlight.getPhase(self.tls_id), 3)
 
     def encode(self, m: dict) -> int:
-        """Mixed-radix index of the discretised state."""
+        """Mixed-radix index of the discretised state (Section 6.2.2)."""
         idx = 0
         for q in m["queues"]:
             idx = idx * self.n_q + bin_index(q, self.n_q, self.q_max)

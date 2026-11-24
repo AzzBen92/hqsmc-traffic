@@ -1,12 +1,12 @@
 """Weight sensitivity and ablation studies (seed 42).
 
-    python scripts/ablation.py --scenario sefrou --part weights
-    python scripts/ablation.py --scenario saiss  --part weights
-    python scripts/ablation.py --scenario saiss  --part components
+    python scripts/ablation.py --scenario sefrou --part weights        # Table 6.5
+    python scripts/ablation.py --scenario saiss  --part weights        # Table 7.11
+    python scripts/ablation.py --scenario saiss  --part components     # Table 7.12
     python scripts/ablation.py --scenario saiss  --part components --summarize
 
 Weights: nine configurations (w_Q, w_S, w_MC) of the simplex, including the three degenerate
-cases (each algorithm alone). Components (multi-agent network):
+cases (each algorithm alone). Components (Chapter 7):
     A  H-QSMC-MARL, with neighbours      B  hybrid, without neighbours
     C  Q-learning, with neighbours       D  Q-learning, without neighbours
 """

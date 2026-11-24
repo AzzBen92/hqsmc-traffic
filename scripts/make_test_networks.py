@@ -3,11 +3,13 @@
     python scripts/make_test_networks.py
 
 Creates
-    map/demo_single/   four-arm intersection with randomTrips demand (single-agent pipeline)
-    map/demo_grid/     4 x 2 grid of eight signalised intersections (multi-agent pipeline)
+    map/isolated/      isolated four-arm intersection with stochastic arrivals (Chapter 5)
+    map/demo_single/   the same four-arm intersection with randomTrips demand (pipeline of Chapter 6)
+    map/demo_grid/     4 x 2 grid of eight signalised intersections (pipeline of Chapter 7)
 
-These networks are only meant to check that the code runs; the experiments use the real
-Route de Sefrou and Saiss networks (map/sefrou/ and map/saiss/, see map/README.md).
+The isolated intersection IS the Chapter 5 set-up. The two demo networks are only meant to check
+that the code runs: the thesis results were obtained on the real Route de Sefrou and Saiss networks
+(map/sefrou/ and map/saiss/, see map/README.md).
 """
 
 from __future__ import annotations
@@ -74,6 +76,22 @@ def four_arm(folder: Path, name: str, arm: float = 250.0, lanes: int = 2, speed:
          "-o", f"{name}.net.xml", "--no-turnarounds", "true", "--tls.default-type", "static"], cwd=folder)
 
 
+def isolated():
+    """Chapter 5: horizontal and vertical stochastic arrivals (Bernoulli insertion every second)."""
+    folder = ROOT / "map" / "isolated"
+    four_arm(folder, "isolated")
+    flows = []
+    # straight 60 %, left 20 %, right 20 % from each approach; total about 360 veh/h
+    turns = {"N": ("S", "E", "W"), "S": ("N", "W", "E"), "E": ("W", "S", "N"), "W": ("E", "N", "S")}
+    p_total = 0.025
+    for o, (straight, left, right) in turns.items():
+        for dest, share in ((straight, 0.6), (left, 0.2), (right, 0.2)):
+            flows.append(f'    <flow id="{o}_{dest}" begin="0" end="3600" probability="{p_total * share:.4f}" '
+                         f'from="{o}2C" to="C2{dest}" departLane="best" departSpeed="max"/>')
+    (folder / "isolated.rou.xml").write_text("<routes>\n" + "\n".join(flows) + "\n</routes>\n")
+    sumocfg(folder / "isolated.sumocfg", "isolated.net.xml", "isolated.rou.xml")
+
+
 def demo_single():
     folder = ROOT / "map" / "demo_single"
     four_arm(folder, "osm")
@@ -104,6 +122,7 @@ def demo_grid():
 
 
 if __name__ == "__main__":
+    isolated()
     demo_single()
     demo_grid()
-    print("Test networks written under map/demo_single and map/demo_grid.")
+    print("Test networks written under map/isolated, map/demo_single and map/demo_grid.")

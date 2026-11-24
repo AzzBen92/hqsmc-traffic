@@ -9,7 +9,7 @@ authors:
     given-names: "Adil"
     affiliation: "L2MASI Laboratory, National School of Commerce and Management, Sidi Mohamed Ben Abdellah University, Fez, Morocco"
 license: MIT
-repository-code: "https://github.com/AzzBen92/hqsmc-traffic"
+repository-code: "https://github.com/AzzBen92"
 preferred-citation:
   type: article
   title: "A Multi-Agent Reinforcement Learning Framework for Adaptive Traffic Signal Control in Real Urban Networks: Simulation, Performance Analysis, and Statistical Evaluation"
@@ -35,4 +35,17 @@ references:
     journal: "Mathematical and Computational Applications"
     volume: 31
     start: 151
+    year: 2026
+  - type: book-section
+    title: "Reinforcement Learning for Autonomous Driving: Optimization Strategies and Methodologies"
+    authors:
+      - family-names: "Ben Moussa"
+        given-names: "Azzeddine"
+      - family-names: "Khazari"
+        given-names: "Adil"
+    collection-title: "Artificial Intelligence and Mathematics, ICAIM 2025 (Springer Proceedings in Mathematics & Statistics, vol. 538)"
+    publisher:
+      name: "Springer, Cham"
+    start: 369
+    end: 385
     year: 2026

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Route de Sefrou - Boulevard Moulay Rachid, Fes. Generated with the OSM Web Wizard,
+<!-- Route de Sefrou - Boulevard Moulay Rachid, Fes (Chapter 6). Generated with the OSM Web Wizard,
      SUMO 1.27.1; paths made relative for the repository. -->
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
     <input>

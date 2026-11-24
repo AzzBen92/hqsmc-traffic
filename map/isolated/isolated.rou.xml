@@ -1,0 +1,14 @@
+<routes>
+    <flow id="N_S" begin="0" end="3600" probability="0.0150" from="N2C" to="C2S" departLane="best" departSpeed="max"/>
+    <flow id="N_E" begin="0" end="3600" probability="0.0050" from="N2C" to="C2E" departLane="best" departSpeed="max"/>
+    <flow id="N_W" begin="0" end="3600" probability="0.0050" from="N2C" to="C2W" departLane="best" departSpeed="max"/>
+    <flow id="S_N" begin="0" end="3600" probability="0.0150" from="S2C" to="C2N" departLane="best" departSpeed="max"/>
+    <flow id="S_W" begin="0" end="3600" probability="0.0050" from="S2C" to="C2W" departLane="best" departSpeed="max"/>
+    <flow id="S_E" begin="0" end="3600" probability="0.0050" from="S2C" to="C2E" departLane="best" departSpeed="max"/>
+    <flow id="E_W" begin="0" end="3600" probability="0.0150" from="E2C" to="C2W" departLane="best" departSpeed="max"/>
+    <flow id="E_S" begin="0" end="3600" probability="0.0050" from="E2C" to="C2S" departLane="best" departSpeed="max"/>
+    <flow id="E_N" begin="0" end="3600" probability="0.0050" from="E2C" to="C2N" departLane="best" departSpeed="max"/>
+    <flow id="W_E" begin="0" end="3600" probability="0.0150" from="W2C" to="C2E" departLane="best" departSpeed="max"/>
+    <flow id="W_N" begin="0" end="3600" probability="0.0050" from="W2C" to="C2N" departLane="best" departSpeed="max"/>
+    <flow id="W_S" begin="0" end="3600" probability="0.0050" from="W2C" to="C2S" departLane="best" departSpeed="max"/>
+</routes>

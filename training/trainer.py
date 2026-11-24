@@ -1,4 +1,4 @@
-"""Single-agent training loop.
+"""Single-agent training loop (Chapters 5 and 6, Algorithms 5 and 6).
 
 At every step:   execute a_t -> observe r_{t+1}, s_{t+1} -> select a_{t+1} -> update(s_t, a_t, r, s_{t+1}, a_{t+1})
 End of episode:  Monte Carlo pass (Monte Carlo and hybrid methods), then epsilon <- max(eps_min, d eps)
@@ -24,7 +24,8 @@ def make_agent(cfg, n_states: int, n_actions: int):
                   epsilon_decay=cfg.EPSILON_DECAY, epsilon_min=cfg.EPSILON_MIN, seed=cfg.SEED,
                   mc_visit=cfg.MC_VISIT)
     if cfg.ALGORITHM == "hybrid":
-        return HybridAgent(n_states, n_actions, weights=cfg.HYBRID_WEIGHTS, **common)
+        return HybridAgent(n_states, n_actions, weights=cfg.HYBRID_WEIGHTS,
+                           weight_mode=cfg.HYBRID_WEIGHT_MODE, **common)
     if cfg.ALGORITHM in TABULAR:
         return TABULAR[cfg.ALGORITHM](n_states, n_actions, **common)
     return None   # "fixed": native SUMO program
@@ -79,6 +80,8 @@ def train(cfg) -> None:
     t0 = time.time()
     try:
         for ep in range(start, n_episodes):
+            if isinstance(agent, HybridAgent):
+                agent.set_progress((ep + 1) / cfg.EPISODES)      # xi (dynamic weights only)
             eps_used = agent.epsilon if agent else 0.0
             summary = run_episode(env, agent, ep)
             if agent:

@@ -1,4 +1,4 @@
-"""Turning movements realised at the eight Saiss intersections.
+"""Turning movements realised at the eight Saiss intersections (Table 7.6).
 
     python scripts/turning_ratios.py --routes map/saiss/osm.passenger.rou.xml
 
@@ -30,7 +30,7 @@ def main():
     args = ap.parse_args()
     cfg = load_config(SCENARIO="saiss")
     net = sumolib.net.readNet(args.net, withPrograms=True)
-    # traffic light of each agent: given ids, or the one closest to the coordinates of config.py
+    # traffic light of each agent: given ids, or the one closest to the coordinates of Table 7.3
     tls_nodes = {}
     for tls in net.getTrafficLights():
         nodes = {c[0].getEdge().getToNode() for c in tls.getConnections()}

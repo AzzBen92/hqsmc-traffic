@@ -1,4 +1,4 @@
-"""Traffic demand with SUMO's randomTrips.py and the matching osm.sumocfg.
+"""Traffic demand with SUMO's randomTrips.py and the matching osm.sumocfg (Sections 6.2.1 and 7.5.3).
 
     python scripts/generate_demand.py --scenario sefrou                  # 3600 veh/h (--insertion-rate)
     python scripts/generate_demand.py --scenario saiss --demand medium   # 4313 trips / 3600 s

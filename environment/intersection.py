@@ -4,7 +4,7 @@
   and labels each of them North-South or East-West from the network geometry, so that the
   same code works for any intersection extracted from OpenStreetMap.
 * `SignalController`     applies green requests with minimum / maximum green times and
-  the yellow (3 s) + all-red (2 s) transition.
+  the yellow (3 s) + all-red (2 s) transition (Table 6.1).
 * `IntersectionMonitor`  measures queues, waiting time, speed, CO2 and fuel on the
   incoming lanes through TraCI subscriptions (one call per lane per step).
 """
@@ -167,7 +167,7 @@ class SignalController:
 
     @property
     def phase_index(self) -> int:
-        """phi in {0, 1, 2, 3}: index of the active green (0, 1, 2; capped at 2),
+        """phi in {0, 1, 2, 3} (Chapter 6): index of the active green (0, 1, 2; capped at 2),
         3 during a yellow / all-red transition."""
         return 3 if self.kind != "green" else min(self.current, 2)
 
@@ -337,7 +337,7 @@ class IntersectionMonitor:
         return m
 
     def episode_summary(self) -> dict:
-        """Episode indicators: mean queue, per-vehicle waiting, mean speed, CO2, fuel."""
+        """Episode indicators (Section 6.2.5): mean queue, per-vehicle waiting, mean speed, CO2, fuel."""
         a = self.acc
         steps = max(a.steps, 1)
         n_vehicles = len(a.vehicles)
@@ -353,13 +353,13 @@ class IntersectionMonitor:
 
 
 def multi_objective_reward(m: dict, coefs: dict) -> float:
-    """r = -2.0 q - 0.05 w + 1.5 v - 1e-3 CO2 - 1e-3 fuel."""
+    """r = -2.0 q - 0.05 w + 1.5 v - 1e-3 CO2 - 1e-3 fuel (Eq. 6.2 / 7.6)."""
     return (coefs["queue"] * m["queue"] + coefs["wait"] * m["wait"] + coefs["speed"] * m["speed"]
             + coefs["co2"] * m["co2"] + coefs["fuel"] * m["fuel"])
 
 
 def bin_index(x: float, n_bins: int, x_max: float) -> int:
-    """Uniform bins on [0, x_max]; out-of-range values go to the nearest bin."""
+    """Uniform bins on [0, x_max]; out-of-range values go to the nearest bin (Section 6.2.2)."""
     if x_max <= 0:
         return 0
     return int(min(max(math.floor(n_bins * x / x_max), 0), n_bins - 1))

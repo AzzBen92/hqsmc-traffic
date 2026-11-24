@@ -1,4 +1,4 @@
-"""Entry point, multi-agent Saiss network (eight intersections).
+"""Entry point, multi-agent Saiss network (Chapter 7).
 
     python train_multi.py
 

@@ -1,4 +1,4 @@
-"""Indicators computed from the per-episode CSV files."""
+"""Indicators computed from the per-episode CSV files (Sections 6.4 and 7.5.4)."""
 
 from __future__ import annotations
 
@@ -35,10 +35,11 @@ def moving_average(x, window: int) -> np.ndarray:
 
 def convergence_episode(rewards, window: int = 200, fraction: float = 0.9, hold: int = 200):
     """First episode from which the smoothed reward reaches `fraction` of its final value and stays
-    there for at least `hold` consecutive episodes. Returns None if never reached.
+    there for at least `hold` consecutive episodes (Section 6.4). Returns None if never reached.
 
-    This definition applies when the final reward is positive. When it is negative or zero,
-    "90 % of the final value" is ill-defined, and the criterion becomes 90 % of the progress from the initial to the final
+    This is the thesis definition when the final reward is positive (as in Chapters 6 and 7).
+    When it is negative or zero (e.g. Chapter 5, reward = - waiting time), "90 % of the final value"
+    is ill-defined, and the criterion becomes 90 % of the progress from the initial to the final
     smoothed value: smoothed >= initial + fraction * (final - initial).
     """
     sm = moving_average(rewards, window)
