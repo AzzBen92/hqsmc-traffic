@@ -1,9 +1,9 @@
-"""Run every method x seed of a scenario (the full protocol of Chapters 6 and 7).
+"""Run every method x seed of a scenario (full experimental protocol).
 
     python scripts/run_experiments.py --scenario sefrou                  # 4 methods x 5 seeds + reference
     python scripts/run_experiments.py --scenario saiss --jobs 4          # 4 tabular methods x 3 seeds
     python scripts/run_experiments.py --scenario saiss --methods dqn ppo # deep MARL baselines
-    python scripts/run_experiments.py --scenario saiss --demand high     # demand robustness (Table 7.10)
+    python scripts/run_experiments.py --scenario saiss --demand high     # demand robustness
 
 Each run is independent (its own SUMO process), so --jobs N runs N of them in parallel.
 Runs resume from their last checkpoint if interrupted. Settings not given on the command line
@@ -37,7 +37,7 @@ def run_one(overrides: dict) -> str:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--scenario", required=True, choices=["isolated", "sefrou", "saiss"])
+    ap.add_argument("--scenario", required=True, choices=["sefrou", "saiss"])
     ap.add_argument("--methods", nargs="*", default=None,
                     help="default: hybrid qlearning sarsa montecarlo fixed")
     ap.add_argument("--seeds", nargs="*", type=int, default=None, help="default: SEEDS of the scenario")

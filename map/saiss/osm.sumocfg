@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Saiss district, Fes - eight signalised intersections (Chapter 7), medium demand (4314 trips / 3600 s).
+<!-- Saiss district, Fes - eight signalised intersections, medium demand (4314 trips / 3600 s).
      Generated with the OSM Web Wizard, SUMO 1.27.1; outputs removed for training. -->
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
     <input>

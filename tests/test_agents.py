@@ -5,7 +5,6 @@ import pytest
 
 from agents import HybridAgent, HybridMARLAgent, MonteCarloAgent, QLearningAgent, SarsaAgent
 from agents.base_agent import monte_carlo_pass
-from agents.hybrid import dynamic_weights
 
 KW = dict(alpha=0.1, gamma=0.9, epsilon_start=0.0, seed=0)
 
@@ -79,15 +78,6 @@ def test_marl_three_tables_and_aggregation():
     assert ag.QQ[0, 1] == pytest.approx(0.2) and ag.QS[0, 1] == pytest.approx(0.2)
     assert ag.QMC[0, 1] == pytest.approx(0.2)
     assert ag.values(0)[1] == pytest.approx(0.5 * 0.2 + 0.3 * 0.2 + 0.2 * 0.2)
-
-
-def test_dynamic_weights_properties():
-    w0, w_mid, w1 = dynamic_weights(0.0), dynamic_weights(0.5), dynamic_weights(1.0)
-    for w in (w0, w_mid, w1):
-        assert sum(w) == pytest.approx(1.0) and min(w) >= 0
-    assert w0[1] == max(w0)              # SARSA dominates at the beginning
-    assert w1[0] > w0[0]                 # Q-learning weight increases
-    assert w1[2] > w_mid[2] > w0[2]      # Monte Carlo weight increases towards the end
 
 
 def test_epsilon_decay_and_floor():

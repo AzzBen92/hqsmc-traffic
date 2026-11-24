@@ -1,16 +1,13 @@
 """Hybrid Q-learning - SARSA - Monte Carlo methods.
 
-HybridAgent       single Q-table (variants V2 and V3, Table 7.1)
+HybridAgent       H-QSMC, single Q-table, fixed weights (w_Q, w_S, w_MC)
     every step   : Q(s,a) += alpha [w_Q d_QL + w_S d_SA]      (both errors from the SAME table,
                                                                applied simultaneously)
     end of episode: Q(s,a) += alpha w_MC [G - Q(s,a)]          (backward pass, last visit)
-    V3 = H-QSMC (Chapter 6): fixed weights (0.5, 0.3, 0.2), Algorithm 6
-    V2 (Chapter 5)       : weights f(xi), xi = episode / N, renormalised once per episode,
-                           Algorithm 5
 
-HybridMARLAgent   three separate tables per agent (variant V4 = H-QSMC-MARL, Chapter 7)
+HybridMARLAgent   H-QSMC-MARL, three separate tables per agent
     Q^Q  updated by Q-learning, Q^S by SARSA (every step), Q^MC by Monte Carlo (end of episode);
-    decision on  Q^H = w_Q Q^Q + w_S Q^S + w_MC Q^MC  (Eq. 7.11)
+    decision on  Q^H = w_Q Q^Q + w_S Q^S + w_MC Q^MC
 """
 
 from __future__ import annotations
@@ -20,42 +17,14 @@ import numpy as np
 from .base_agent import TabularAgent, monte_carlo_pass
 
 
-# Scheduling functions of the dynamic variant (Chapters 4 and 5). The thesis specifies them only
-# qualitatively: f_S decreasing (SARSA dominates early), f_Q increasing, f_MC increasing slowly
-# towards the end of training. The functions below satisfy these properties.
-def f_q(xi: float) -> float:
-    return 0.2 + 0.6 * xi
-
-
-def f_s(xi: float) -> float:
-    return 0.7 - 0.6 * xi
-
-
-def f_mc(xi: float) -> float:
-    return 0.1 + 0.3 * xi ** 2
-
-
-def dynamic_weights(xi: float) -> tuple[float, float, float]:
-    xi = min(max(xi, 0.0), 1.0)
-    raw = np.array([f_q(xi), f_s(xi), f_mc(xi)])
-    w = raw / raw.sum()
-    return float(w[0]), float(w[1]), float(w[2])
-
-
 class HybridAgent(TabularAgent):
     """H-QSMC: single table, TD errors every step, Monte Carlo correction at the end of the episode."""
 
     name = "hybrid"
 
-    def __init__(self, *args, weights=(0.5, 0.3, 0.2), weight_mode: str = "fixed", **kwargs):
+    def __init__(self, *args, weights=(0.5, 0.3, 0.2), **kwargs):
         super().__init__(*args, **kwargs)
-        self.weight_mode = weight_mode
         self.w_q, self.w_s, self.w_mc = weights
-
-    def set_progress(self, xi: float) -> None:
-        """Dynamic variant: update the weights once per episode (Eq. 5.13)."""
-        if self.weight_mode == "dynamic":
-            self.w_q, self.w_s, self.w_mc = dynamic_weights(xi)
 
     def update(self, s, a, r, s_next, a_next):
         q_sa = self.Q[s, a]                                    # value at the start of the step
@@ -83,9 +52,9 @@ class HybridMARLAgent(TabularAgent):
         super().__init__(*args, **kwargs)
         self.w_q, self.w_s, self.w_mc = weights
         shape = (self.n_states, self.n_actions)
-        self.QQ = np.zeros(shape)    # Q-learning table   (Eq. 7.7)
-        self.QS = np.zeros(shape)    # SARSA table        (Eq. 7.8)
-        self.QMC = np.zeros(shape)   # Monte Carlo table  (Eq. 7.9)
+        self.QQ = np.zeros(shape)    # Q-learning table
+        self.QS = np.zeros(shape)    # SARSA table
+        self.QMC = np.zeros(shape)   # Monte Carlo table
         del self.Q
 
     def values(self, s):

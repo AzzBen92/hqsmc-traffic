@@ -2,7 +2,7 @@
 
 The table is updated only at the end of the episode, from the complete returns
 G_t = sum_k gamma^k r_{t+k+1}:  Q(s,a) <- Q(s,a) + alpha [G_t - Q(s,a)]
-(constant alpha rather than 1/n, Section 6.3).
+(constant alpha rather than 1/n).
 """
 
 from .base_agent import TabularAgent, monte_carlo_pass

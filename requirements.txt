@@ -9,4 +9,3 @@ eclipse-sumo>=1.27
 traci>=1.27
 sumolib>=1.27
 libsumo>=1.27
-# optional: pygame (rendering of the Chapter 4 track)

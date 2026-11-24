@@ -26,7 +26,7 @@ class TabularAgent:
         self.alpha, self.gamma = alpha, gamma
         self.epsilon, self.epsilon_decay, self.epsilon_min = epsilon_start, epsilon_decay, epsilon_min
         self.mc_visit = mc_visit
-        self.rng = random.Random(seed)   # Python generator: epsilon-greedy draws (Section 6.4)
+        self.rng = random.Random(seed)   # Python generator: epsilon-greedy draws
         self.Q = np.zeros((self.n_states, self.n_actions))
         self.buffer: list[tuple[int, int, float]] = []
 
@@ -78,7 +78,7 @@ def monte_carlo_pass(table: np.ndarray, episode: list[tuple[int, int, float]], s
     """Backward pass  Q(s,a) <- Q(s,a) + step * (G_t - Q(s,a)).
 
     visit="last": the episode is traversed backwards and each (s, a) is updated only at its
-    first encounter, i.e. with the return of its LAST visit (convention (ii), Section 6.3).
+    first encounter, i.e. with the return of its LAST visit.
     visit="every": every visit is updated.
     """
     G = 0.0

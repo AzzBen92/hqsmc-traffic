@@ -1,9 +1,9 @@
-"""Entry point, one intersection (Chapters 5 and 6).
+"""Entry point, one intersection (single agent).
 
     python -m training.train
 
 The method, seed and number of episodes are set in config.py (ALGORITHM, SEED, EPISODES),
-with SCENARIO = "isolated" (Chapter 5) or "sefrou" (Chapter 6).
+with SCENARIO = "sefrou".
 """
 
 from config import load_config
