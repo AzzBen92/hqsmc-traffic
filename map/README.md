@@ -14,8 +14,11 @@ Each study has its own folder. A simulation is entirely defined by the files of 
 * `sefrou/` - Route de Sefrou - Boulevard Moulay Rachid intersection, Fes (Chapter 6). Included:
   network, demand (630 trips, OSM Web Wizard), buildings, the OSM extract (`osm_bbox.osm.xml.gz`,
   bounds 34.0032-34.0203 N, 4.9930-4.9705 W) and `osm.sumocfg`.
-* `saiss/` - Saiss district, eight signalised intersections (Chapter 7). Three demand levels:
-  `osm.sumocfg` (medium, 4313 trips), `osm_low.sumocfg` (~3000), `osm_high.sumocfg` (~6200).
+* `saiss/` - Saiss district, eight signalised intersections (Chapter 7). Included: network
+  (`osm.net.xml.gz`, 8 traffic lights), medium demand (`osm.passenger.trips.xml`, 4314 trips over
+  3600 s, OSM Web Wizard, SUMO 1.27.1), buildings and `osm.sumocfg` (simulation outputs removed for
+  training). The low and high demand levels (`osm_low.sumocfg`, `osm_high.sumocfg`) are not included;
+  `scripts/generate_demand.py --scenario saiss --demand low|high` builds them from this network.
 * `isolated/` - synthetic isolated intersection (Chapter 5), created by
   `python scripts/make_test_networks.py` (with the `demo_single/` and `demo_grid/` test networks).
 
