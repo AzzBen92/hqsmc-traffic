@@ -31,8 +31,8 @@ def networks():
 
 
 @pytest.mark.parametrize("scenario,alg,cfgfile", [
-    ("isolated", "hybrid", None),
     ("sefrou", "hybrid", "map/demo_single/osm.sumocfg"),
+    ("sefrou", "qlearning", "map/demo_single/osm.sumocfg"),
     ("sefrou", "montecarlo", "map/demo_single/osm.sumocfg"),
     ("sefrou", "fixed", "map/demo_single/osm.sumocfg"),
 ])

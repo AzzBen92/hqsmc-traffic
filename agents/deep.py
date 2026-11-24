@@ -1,8 +1,8 @@
-"""Deep MARL baselines of Section 7.6.10: independent DQN and PPO agents, one per intersection.
+"""Deep MARL baselines: independent DQN and PPO agents, one per intersection.
 
 Implemented with NumPy only (no GPU, no deep-learning framework), with the usual default
 hyper-parameters (config.SCENARIO_SETTINGS["saiss"]["DQN"/"PPO"]). They receive the same
-state (continuous, normalised: Table 7.2), the same binary action and the same reward
+state (continuous, normalised), the same binary action and the same reward
 as the tabular agents, and their updates also use the EXECUTED action after the
 safety constraint.
 """
@@ -249,7 +249,7 @@ class PPOAgent:
     def _minibatch(self, x, a, logp_old, adv, ret):
         m = len(a)
         adv = (adv - adv.mean()) / (adv.std() + 1e-8) if m > 1 else adv
-        # ---- actor: clipped surrogate objective L^CLIP (Chapter 5) + entropy bonus
+        # ---- actor: clipped surrogate objective L^CLIP + entropy bonus
         logits = self.actor.forward(x)
         p = _softmax(logits)
         logp = np.log(p[np.arange(m), a] + 1e-12)

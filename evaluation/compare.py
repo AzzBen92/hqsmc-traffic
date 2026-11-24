@@ -1,7 +1,7 @@
 """Result tables and statistical tests from the per-episode CSV files.
 
-    python -m evaluation.compare --scenario sefrou          # Tables 6.2 to 6.4
-    python -m evaluation.compare --scenario saiss           # Tables 7.8, 7.9 and 7.13
+    python -m evaluation.compare --scenario sefrou
+    python -m evaluation.compare --scenario saiss
     python -m evaluation.compare --scenario saiss --demand high
 
 Final metrics: mean over the last EVAL_LAST episodes of each run, then mean +/- std over the
@@ -113,7 +113,7 @@ def write_outputs(cfg, res: dict, name: str) -> Path:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--scenario", default=None, help="isolated | sefrou | saiss (default: config.py)")
+    ap.add_argument("--scenario", default=None, help="sefrou | saiss (default: config.py)")
     ap.add_argument("--demand", default=None, help="saiss only: low | medium | high")
     ap.add_argument("--results", default=None, help="results directory (default: config.RESULTS_DIR)")
     ap.add_argument("--tag", default="", help="RUN_TAG of the runs to compare")

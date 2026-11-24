@@ -1,8 +1,7 @@
-"""Figures of Chapters 5, 6 and 7 from the per-episode CSV files.
+"""Figures from the per-episode CSV files.
 
-    python -m evaluation.plots --scenario sefrou     # Figures 6.4 to 6.13
-    python -m evaluation.plots --scenario saiss      # Figures 7.7 to 7.13
-    python -m evaluation.plots --scenario isolated   # Figure 5.3
+    python -m evaluation.plots --scenario sefrou     # one intersection
+    python -m evaluation.plots --scenario saiss      # network of eight intersections
 
 Curves are averaged over the available seeds and smoothed by a moving average
 (SMOOTH_WINDOW episodes). Figures are written as PDF and PNG to figures/<scenario>/.
@@ -104,7 +103,7 @@ class Plotter:
         ax.legend(frameon=False)
         self.save(fig, name)
 
-    # ------------------------------------------------------------------ Chapter 6 figures
+    # ------------------------------------------------------------------ single-intersection figures
     def reward_individual(self):
         n = len(self.methods)
         cols = 2
@@ -236,7 +235,7 @@ class Plotter:
         fig.colorbar(im, ax=ax, fraction=0.03, label="Score normalisé")
         self.save(fig, "fig_heatmap")
 
-    # ------------------------------------------------------------------ Chapter 7 figures
+    # ------------------------------------------------------------------ multi-agent figures
     def radar(self, other="qlearning"):
         if other not in self.methods or "hybrid" not in self.methods:
             return
@@ -285,25 +284,6 @@ class Plotter:
         ax.legend(frameon=False)
         self.save(fig, "fig_dqn_ppo_convergence")
 
-    # ------------------------------------------------------------------ Chapter 5 figure
-    def chapter5_panels(self):
-        fig, axes = plt.subplots(2, 2, figsize=(11, 7), sharex=True)
-        panels = [("wait", "(a) Délai moyen (s)"), ("queue", "(b) Longueur moyenne de file (véh.)"),
-                  ("reward", "(c) Temps d'attente cumulé (s)"), ("throughput", "(d) Débit (véh./h)")]
-        for ax, (col, title) in zip(axes.flat, panels):
-            for m in self.methods:
-                y = self.curve(m, col)
-                if col == "reward":
-                    y = -y      # reward = - waiting time
-                st = STYLE[m]
-                ax.plot(y, color=st["color"], ls=st["ls"], lw=st["lw"], label=self.labels.get(m, m))
-            ax.set_title(title)
-        for ax in axes[-1]:
-            ax.set_xlabel("Épisode")
-        axes[0, 0].legend(frameon=False)
-        fig.tight_layout()
-        self.save(fig, "fig_5_3_comparaison")
-
 
 def make_figures(cfg, tag: str = ""):
     methods = ["hybrid", "qlearning", "sarsa", "montecarlo", "dqn", "ppo", "fixed"]
@@ -313,9 +293,6 @@ def make_figures(cfg, tag: str = ""):
     labels = MARL_LABELS if cfg.SCENARIO == "saiss" else METHOD_LABELS
     p = Plotter(cfg, runs, labels)
     print(f"Figures -> {p.out}")
-    if cfg.SCENARIO == "isolated":
-        p.chapter5_panels()
-        return
     if cfg.SCENARIO == "sefrou":
         p.reward_individual()
         p.metric_figure("reward", "fig_reward_comparison")

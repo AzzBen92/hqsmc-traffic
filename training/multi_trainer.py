@@ -1,8 +1,8 @@
-"""Multi-agent training loop for the Saiss network (Chapter 7, Algorithm 7).
+"""Multi-agent training loop for the Saiss network (H-QSMC-MARL and baselines).
 
 At every decision step, for every agent i:
     requested action  a_t^i  = epsilon-greedy on its values (Q^H for H-QSMC-MARL)
-    executed action   ~a_t^i = C(a_t^i, s_t^i)  (safety constraint, Eq. 7.15)
+    executed action   ~a_t^i = C(a_t^i, s_t^i)  (minimum-green safety constraint)
 The effective joint action is applied in SUMO; Q-learning and SARSA tables are updated every
 step with the EXECUTED actions (SARSA uses ~a_{t+1}^i), the Monte Carlo table at the end of the
 episode. Checkpoints (Q-tables, epsilon, RNG states) are written every CHECKPOINT_EVERY episodes.
